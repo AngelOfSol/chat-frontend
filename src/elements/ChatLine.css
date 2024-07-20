@@ -1,0 +1,10 @@
+.message-group {
+    white-space: pre-wrap;
+    text-align: left;
+    padding: 10px;
+}
+
+.message-group h3 {
+    font-size: 1rem;
+    font-weight: bold;
+}

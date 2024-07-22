@@ -1,4 +1,4 @@
-import { Button, Paper, Stack, TextField, Typography } from "@mui/material"
+import { Button, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch } from "../app/hooks";
 import { logIn } from "../features/user/userStatus";
@@ -12,7 +12,7 @@ function Login() {
     setUsername("");
     setPassword("");
     dispatch(logIn(user));
-  }
+  };
   return (
     <>
       <Paper sx={{ padding: '40px' }}>
@@ -38,6 +38,6 @@ function Login() {
         </Stack>
       </Paper >
     </>
-  )
+  );
 }
-export default Login
+export default Login;

@@ -1,14 +1,16 @@
-import './ChatLine.css'
+import './ChatLine.css';
 import Typography from '@mui/material/Typography';
-import { Paper, Stack } from '@mui/material';
+import { Box, Paper, Stack } from '@mui/material';
 import test from './test.png';
 import { useAppSelector } from '../app/hooks';
+import { ChatLine } from '../features/chat/chatChannel';
 
-function ChatLine({ user, message }: { user: String, message: String }) {
+function ChatLineText({ chatLine }: { chatLine: ChatLine; }) {
   const userStatus = useAppSelector((state) => state.userStatus);
+  let userName = chatLine.user.name;
   if (userStatus.state == 'active') {
-    if (user == userStatus.user.name) {
-      user = "Me";
+    if (userName == userStatus.user.name) {
+      userName = "Me";
     }
   }
 
@@ -17,14 +19,19 @@ function ChatLine({ user, message }: { user: String, message: String }) {
       <Paper square className="message-group">
         <Stack flexDirection="row">
           <img src={test}></img>
-          <Stack flexDirection="column">
-            <Typography variant="h3">{user}</Typography>
-            <Typography variant="body1">{message}</Typography>
-          </Stack>
+          <Box sx={{ margin: '0 0 0 10px' }}>
+            <Stack flexDirection="column">
+              <Stack flexDirection="row">
+                <Typography variant="h3">{userName}</Typography>
+                <Typography variant="caption"> {chatLine.timing.toLocaleString()}</Typography>
+              </Stack>
+              <Typography variant="body1">{chatLine.message}</Typography>
+            </Stack>
+          </Box>
         </Stack>
       </Paper>
     </>
-  )
+  );
 }
 
-export default ChatLine
+export default ChatLineText;

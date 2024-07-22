@@ -1,8 +1,8 @@
-import type { Action, ThunkAction } from "@reduxjs/toolkit"
-import { combineSlices, configureStore } from "@reduxjs/toolkit"
-import { setupListeners } from "@reduxjs/toolkit/query"
-import { userStatusSlice } from "../features/user/userStatus"
-import { chatLinesSlice } from "../features/chat/chatLines"
+import type { Action, ThunkAction } from "@reduxjs/toolkit";
+import { combineSlices, configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { userStatusSlice } from "../features/user/userStatus";
+import { chatLinesSlice } from "../features/chat/chatChannel";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -17,7 +17,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     reducer: rootReducer,
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
-    middleware: getDefaultMiddleware => {
+    middleware: (getDefaultMiddleware) => {
       return getDefaultMiddleware();
     },
     preloadedState,
@@ -26,7 +26,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
   // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
   setupListeners(store.dispatch);
   return store;
-}
+};
 
 export const store = makeStore();
 

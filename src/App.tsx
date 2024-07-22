@@ -1,31 +1,27 @@
-import './App.css'
-import Chat from './pages/Chat';
-import { useAppDispatch, useAppSelector } from './app/hooks';
+import './App.css';
+import { useAppSelector } from './app/hooks';
 import Login from './pages/LogIn';
-import { selectChatLines } from './features/chat/chatLines';
+import MainPage from './pages/MainPage';
 
 
 function App() {
   const userStatus = useAppSelector((state) => state.userStatus);
-  const chatLines = useAppSelector(selectChatLines);
 
   switch (userStatus.state) {
     case 'inactive':
       return (
         <>
           <Login></Login>
-
         </>
-      )
+      );
     case 'active':
       return (
         <>
-          <Chat user={userStatus.user} chatLines={chatLines}></Chat>
-
+          <MainPage user={userStatus.user} ></MainPage>
         </>
-      )
+      );
   }
 
 }
 
-export default App
+export default App;

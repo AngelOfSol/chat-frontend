@@ -1,7 +1,7 @@
-1) get multiple channels
-2) make online list dynamic, add fake profile picture
-3) reduce complexity of Chat element to be ONLY chat lines + chat line submission
-4) add time sent to chat lines
+[x] 1) get multiple channels
+[x] 2) make online list dynamic, add fake profile picture
+[x] 3) reduce complexity of Chat element to be ONLY chat lines + chat line submission
+[x] 4) add time sent to chat lines
 4) create backing server for logging in
 5) setup keycloak to work with logging in
 6) create graphQL api for submitting and getting chatLines

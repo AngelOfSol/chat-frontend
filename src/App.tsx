@@ -1,26 +1,35 @@
+import { useMutation } from '@apollo/client';
+import { gql } from './__generated__';
 import './App.css';
-import { useAppSelector } from './app/hooks';
 import Login from './pages/LogIn';
 import MainPage from './pages/MainPage';
+import { useKeycloak } from '@react-keycloak/web';
+import { User } from './__generated__/graphql';
 
 
 function App() {
-  const userStatus = useAppSelector((state) => state.userStatus);
 
-  switch (userStatus.state) {
-    case 'inactive':
-      return (
-        <>
-          <Login></Login>
-        </>
-      );
-    case 'active':
-      return (
-        <>
-          <MainPage user={userStatus.user} ></MainPage>
-        </>
-      );
+  const { keycloak, initialized } = useKeycloak();
+
+
+
+  if (initialized && keycloak.authenticated) {
+    let data: any = { id: keycloak.idTokenParsed?.sub, name: keycloak.idTokenParsed?.preferred_username };
+    console.log(data);
+    return (
+      <>
+        <MainPage logOut={() => { keycloak.logout(); }} user={data} ></MainPage>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Login></Login>
+      </>
+    );
   }
+
+
 
 }
 

@@ -1,0 +1,13 @@
+[x] 1) get multiple channels
+[x] 2) make online list dynamic, add fake profile picture
+[x] 3) reduce complexity of Chat element to be ONLY chat lines + chat line submission
+[x] 4) add time sent to chat lines
+[-] 4) create backing server for logging in
+[ ] 5) setup keycloak to work with logging in
+[x] 6) create graphQL api for submitting and getting chatLines
+   [x] - make sure there are at least 2 channels
+[x] 7) hook up graphQL api to react app
+[x] 8) create graphQL api for user online list
+[x] 9) hook up api for user online list
+[ ] 10) setup cassandra
+[ ] 11) attach everything to cassandra

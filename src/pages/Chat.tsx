@@ -28,14 +28,15 @@ const SUB_MESSAGES = gql(`
       id
       message
       time
+      channel_id
       user { name, id }
     }
   }
 `);
 
 const ADD_MESSAGE = gql(`
-  mutation AddMessage($channelName: String!, $userId:String!, $message:String!) {
-    addMessage(channelName:$channelName, userId:$userId, message:$message) {
+  mutation AddMessage($channelName: String!, $userId:String!, $userName:String!, $message:String!) {
+    addMessage(channelName:$channelName, userId:$userId, userName:$userName, message:$message) {
       message
     }
   }
@@ -65,15 +66,16 @@ function Chat({ user, channelName }: { user: User, channelName: string; }) {
         channelName: channelName,
         message: value,
         userId: user.id,
+        userName: user.name,
       }
     });
   };
 
 
   //  Wrapper React Element to properly sub/unsub via subscribeToMore
-  return <InnerChat channel={channelName} user={user} messages={messages} addMessage={addMessage} subToMessages={(channelName) => subscribeToMore({
+  return <InnerChat channel={channelName} user={user} messages={messages} addMessage={addMessage} subToMessages={(userId) => subscribeToMore({
     document: SUB_MESSAGES,
-    variables: { userId: user.id },
+    variables: { userId },
     updateQuery: (existing, { subscriptionData }) => {
       return Object.assign({}, existing, {
         allMessagesForUser: [...existing.allMessagesForUser, subscriptionData.data.messageSentForUser],
@@ -83,10 +85,10 @@ function Chat({ user, channelName }: { user: User, channelName: string; }) {
   })}></InnerChat>;
 }
 
-function InnerChat({ channel, messages, subToMessages, addMessage, user }: { channel: string, messages: Message[], subToMessages: (channelName: string) => () => void, addMessage: (value: string) => void, user: User; }) {
+function InnerChat({ channel, messages, subToMessages, addMessage, user }: { channel: string, messages: Message[], subToMessages: (userId: string) => () => void, addMessage: (value: string) => void, user: User; }) {
 
   // Handles updates from the server, subToMessages returns the unsubscribe callback
-  useEffect(() => subToMessages(channel), [channel]);
+  useEffect(() => subToMessages(user.id), [user]);
 
   const dispatch = useAppDispatch();
   const [messageValue, setMessage] = useState("");
@@ -121,7 +123,10 @@ function InnerChat({ channel, messages, subToMessages, addMessage, user }: { cha
           */
       }
       <div></div>
-      {[...messages].reverse().filter(message => message.channel_id == channel).map((chatLine, idx) => (<ChatLineText user={user} key={idx} chatLine={chatLine}></ChatLineText>))}
+      {[...messages]
+        .filter(message => message.channel_id == channel)
+        .sort((left, right) => right.time - left.time)
+        .map((chatLine, idx) => (<ChatLineText user={user} key={idx} chatLine={chatLine}></ChatLineText>))}
     </Stack>
   );
 

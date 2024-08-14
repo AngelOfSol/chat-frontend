@@ -6,9 +6,9 @@ import { useAppSelector } from '../app/hooks';
 import { Message, User } from '../__generated__/graphql';
 
 function ChatLineText({ chatLine, user }: { chatLine: Message, user: User; }) {
-  let userName = chatLine.user.name;
-  if (userName == user.name) {
-    userName = "Me";
+  let userId = chatLine.user.id;
+  if (userId == user.id) {
+    userId = "Me";
   }
 
   return (
@@ -19,7 +19,7 @@ function ChatLineText({ chatLine, user }: { chatLine: Message, user: User; }) {
           <Box sx={{ margin: '0 0 0 10px' }}>
             <Stack flexDirection="column">
               <Stack flexDirection="row">
-                <Typography variant="h3">{userName}</Typography>
+                <Typography variant="h3">{userId}</Typography>
                 <Typography variant="caption"> {new Date(chatLine.time).toLocaleString()}</Typography>
               </Stack>
               <Typography variant="body1">{chatLine.message}</Typography>

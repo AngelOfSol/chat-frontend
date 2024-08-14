@@ -22,6 +22,7 @@ type Channel = { id: string, users: { name: string, id: string; }[]; };
 
 function MainPage({ user, logOut, }: { user: User, logOut: () => void; }) {
   const { loading, error, data } = useQuery(GET_CHANNELS, {
+    pollInterval: 1000,
   });
 
   let channels: Channel[] = [];

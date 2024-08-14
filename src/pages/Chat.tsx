@@ -11,10 +11,11 @@ import { gql } from "../__generated__/gql";
 import { Message, User } from '../__generated__/graphql';
 
 const GET_MESSAGES = gql(`
-  query GetMessages($channel: String!) {
-    messages(channelName: $channel) { 
+  query GetMessages($userId: String!) {
+    allMessagesForUser(userId: $userId) { 
       id
       message
+      channel_id
       time
       user { name, id }
     }
@@ -22,8 +23,8 @@ const GET_MESSAGES = gql(`
 `);
 
 const SUB_MESSAGES = gql(`
-  subscription SubMessages($channel: String!) {
-    messageSent(channelName: $channel) {
+  subscription SubMessages($userId: String!) {
+    messageSentForUser(userId: $userId) {
       id
       message
       time
@@ -43,13 +44,14 @@ const ADD_MESSAGE = gql(`
 
 function Chat({ user, channelName }: { user: User, channelName: string; }) {
 
-  let messages: Message[] = [];
   const { loading, error, data, subscribeToMore } = useQuery(GET_MESSAGES, {
-    variables: { channel: channelName }
+    variables: { userId: user.id }
   });
 
-  if (!loading && data && data.messages) {
-    messages = data.messages;
+  let messages: Message[] = [];
+
+  if (!loading && data && data.allMessagesForUser) {
+    messages = data.allMessagesForUser;
   }
   if (!loading && error) {
     console.error(error);
@@ -71,18 +73,12 @@ function Chat({ user, channelName }: { user: User, channelName: string; }) {
   //  Wrapper React Element to properly sub/unsub via subscribeToMore
   return <InnerChat channel={channelName} user={user} messages={messages} addMessage={addMessage} subToMessages={(channelName) => subscribeToMore({
     document: SUB_MESSAGES,
-    variables: { channel: channelName },
+    variables: { userId: user.id },
     updateQuery: (existing, { subscriptionData }) => {
-      if (existing.messages.find(value =>
-        value.time == subscriptionData.data.messageSent.time
-        && value.user.name == subscriptionData.data.messageSent.user.name)) {
-        console.warn("Susbcription returned duplicate message.");
-        return existing;
-      } else {
-        return Object.assign({}, existing, {
-          messages: [...existing.messages, subscriptionData.data.messageSent],
-        });
-      }
+      return Object.assign({}, existing, {
+        allMessagesForUser: [...existing.allMessagesForUser, subscriptionData.data.messageSentForUser],
+      });
+
     }
   })}></InnerChat>;
 }
@@ -125,7 +121,7 @@ function InnerChat({ channel, messages, subToMessages, addMessage, user }: { cha
           */
       }
       <div></div>
-      {[...messages].reverse().map((chatLine, idx) => (<ChatLineText user={user} key={idx} chatLine={chatLine}></ChatLineText>))}
+      {[...messages].reverse().filter(message => message.channel_id == channel).map((chatLine, idx) => (<ChatLineText user={user} key={idx} chatLine={chatLine}></ChatLineText>))}
     </Stack>
   );
 
